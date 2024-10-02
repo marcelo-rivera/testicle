@@ -1,0 +1,17 @@
+C:\Testicle\Testiculo.Application\bin\Debug\net8.0\Testiculo.Application.deps.json
+C:\Testicle\Testiculo.Application\bin\Debug\net8.0\Testiculo.Application.dll
+C:\Testicle\Testiculo.Application\bin\Debug\net8.0\Testiculo.Application.pdb
+C:\Testicle\Testiculo.Application\obj\Debug\net8.0\Testiculo.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Testicle\Testiculo.Application\obj\Debug\net8.0\Testiculo.Application.AssemblyInfoInputs.cache
+C:\Testicle\Testiculo.Application\obj\Debug\net8.0\Testiculo.Application.AssemblyInfo.cs
+C:\Testicle\Testiculo.Application\obj\Debug\net8.0\Testiculo.Application.csproj.CoreCompileInputs.cache
+C:\Testicle\Testiculo.Application\obj\Debug\net8.0\Testiculo.Application.dll
+C:\Testicle\Testiculo.Application\obj\Debug\net8.0\refint\Testiculo.Application.dll
+C:\Testicle\Testiculo.Application\obj\Debug\net8.0\Testiculo.Application.pdb
+C:\Testicle\Testiculo.Application\obj\Debug\net8.0\ref\Testiculo.Application.dll
+C:\Testicle\Testiculo.Application\bin\Debug\net8.0\Testiculo.Domain.dll
+C:\Testicle\Testiculo.Application\bin\Debug\net8.0\Testiculo.Persistence.dll
+C:\Testicle\Testiculo.Application\bin\Debug\net8.0\Testiculo.Domain.pdb
+C:\Testicle\Testiculo.Application\bin\Debug\net8.0\Testiculo.Persistence.pdb
+C:\Testicle\Testiculo.Application\obj\Debug\net8.0\Testiculo.Application.csproj.AssemblyReference.cache
+C:\Testicle\Testiculo.Application\obj\Debug\net8.0\Testicul.A7734EB2.Up2Date
