@@ -5,6 +5,7 @@ using Testiculo.Application.Contratos;
 using Testiculo.Persistence;
 using Testiculo.Persistence.Contexto;
 using Testiculo.Persistence.Contratos;
+using AutoMapper;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +20,8 @@ builder.Services.AddControllers()
                     Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 ); // Erro de looping eterno que acontece no projeto do curso mas no atual não precisa
                    //só adicionei por didática
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 

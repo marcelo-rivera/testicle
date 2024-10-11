@@ -4,6 +4,7 @@ using Testiculo.Domain;
 using Testiculo.Persistence.Contexto;
 using Testiculo.Application.Contratos;
 using System.Diagnostics.Tracing;
+using Testiculo.Application.Dtos;
 
 namespace Testiculo.Controllers
 {
@@ -35,6 +36,8 @@ namespace Testiculo.Controllers
         
         //private readonly TesticuloContext _context;
         private readonly IEventoService _eventoService;
+        
+
         //public EventoController(TesticuloContext context)
         public EventoController(IEventoService eventoService)
         {
@@ -54,6 +57,23 @@ namespace Testiculo.Controllers
                 var eventos = await _eventoService.GetallEventosAsync(true);
                 if (eventos == null) NotFound("Nenhum evento encontrado");
 
+                // var eventosRetorno = new List<EventoDto>();
+
+                // foreach (var evento in eventos)
+                // {
+                //     eventosRetorno.Add(new EventoDto() {
+                //         Id = evento.Id,
+                //         Local = evento.Local,
+                //         DataEvento = evento.DataEvento.ToString(),
+                //         Tema = evento.Tema,
+                //         QtdPessoas = evento.QtdPessoas,
+                //         ImagemURL = evento.ImagemURL,
+                //         Telefone = evento.Telefone,
+                //         Email = evento.Email
+                //     });
+                // }
+
+                // return Ok(eventosRetorno); // 
                 return Ok(eventos);
             }
             catch(Exception ex)
@@ -110,7 +130,7 @@ namespace Testiculo.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(Evento model)
+        public async Task<IActionResult> Post(EventoDto model)
         {
             try
             {
@@ -127,7 +147,7 @@ namespace Testiculo.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, Evento model)
+        public async Task<IActionResult> Put(int id, EventoDto model)
         {
             try
             {
