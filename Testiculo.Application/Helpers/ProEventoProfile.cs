@@ -9,6 +9,9 @@ namespace testiculo.Helpers
         public ProEventoProfile()
         {
             CreateMap<Evento, EventoDto>().ReverseMap();    
+            CreateMap<Lote, LoteDto>().ReverseMap(); 
+            CreateMap<RedeSocial, RedeSocialDto>().ReverseMap(); 
+            CreateMap<Palestrante, PalestranteDto>().ReverseMap(); 
         }
     }
 }

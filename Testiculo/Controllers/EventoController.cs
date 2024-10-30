@@ -55,7 +55,7 @@ namespace Testiculo.Controllers
             try
             {
                 var eventos = await _eventoService.GetallEventosAsync(true);
-                if (eventos == null) NotFound("Nenhum evento encontrado");
+                if (eventos == null) NoContent();
 
                 // var eventosRetorno = new List<EventoDto>();
 
@@ -95,7 +95,7 @@ namespace Testiculo.Controllers
             try
             {
                 var evento = await _eventoService.GetEventosByIdAsync(id,true);
-                if (evento == null) NotFound("Nenhum evento encontrado - Id");
+                if (evento == null) NoContent();
 
                 return Ok(evento);
             }
@@ -117,7 +117,7 @@ namespace Testiculo.Controllers
             try
             {
                 var evento = await _eventoService.GetallEventosByTemaAsync(tema, true);
-                if (evento == null) NotFound("Nenhum evento encontrado - Tema");
+                if (evento == null) NoContent();
 
                 return Ok(evento);
             }
@@ -135,7 +135,7 @@ namespace Testiculo.Controllers
             try
             {
                 var evento = await _eventoService.AddEventos(model);
-                if (evento == null) return BadRequest("Erro ao tentar adicionar evento");
+                if (evento == null) return NoContent();
 
                 return Ok(evento);
             }
@@ -168,9 +168,12 @@ namespace Testiculo.Controllers
         {
             try
             {
+                var evento = await _eventoService.GetEventosByIdAsync(id,true);
+                if (evento == null) NoContent();
+
                 return await _eventoService.DeleteEvento(id) ?
                     Ok("Excluído") :
-                    BadRequest("Evento não excluído");
+                    throw new Exception("Ocorreu um problema não específico ao tentar excluir Evento.");
             }
             catch (Exception ex)
             {

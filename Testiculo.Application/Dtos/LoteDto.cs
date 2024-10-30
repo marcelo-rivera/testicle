@@ -1,8 +1,6 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Testiculo.Domain
+namespace Testiculo.Application.Dtos
 {
-    public class Lote
+    public class LoteDto
     {
         public int Id { get; set; }
         public string? Nome { get; set; }
@@ -10,8 +8,7 @@ namespace Testiculo.Domain
         public DateTime? DataInicio { get; set; }
         public DateTime? DataFim { get; set; }
         public int Quantidade { get; set; }
-        //[ForeignKey("EventosDetalhes")] // para indicar a foreign key
         public int EventoId { get; set; }
-        public Evento? Evento {get; set; }
+        public EventoDto? Evento {get; set; }
     }
 }
