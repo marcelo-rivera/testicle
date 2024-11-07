@@ -172,7 +172,7 @@ namespace Testiculo.Controllers
                 if (evento == null) NoContent();
 
                 return await _eventoService.DeleteEvento(id) ?
-                    Ok("Excluído") :
+                    Ok(new { message = "Excluído"}) :
                     throw new Exception("Ocorreu um problema não específico ao tentar excluir Evento.");
             }
             catch (Exception ex)
