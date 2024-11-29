@@ -23,6 +23,6 @@ namespace Testiculo.Persistence.Contratos
         /// </summary>
         /// <param name="id">Código chave da tabela lote</param>
         /// <returns>apenas um lote</returns>
-        Task<Lote> GetLoteByIdsAsync(int eventoId, int id);
+        Task<Lote> GetLotebyIdsAsync(int eventoId, int id);
     }
 }

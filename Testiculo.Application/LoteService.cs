@@ -26,21 +26,17 @@ namespace Testiculo.Application
             _lotePersist = lotePersist;
             _mapper = mapper;
         }
-        public async Task<LoteDto> AddEventos(LoteDto model)
+        public async Task AddLote(int eventoId, LoteDto model)
         {
             try
             {
-                var evento = _mapper.Map<Evento>(model);
+                var lote = _mapper.Map<Lote>(model);
+                lote.EventoId = eventoId;
 
-                _geralPersist.Add<Evento>(evento);
-                
-                if (await _geralPersist.SaveChangesAsync())
-                {
-                    var eventoRetorno = await _lotePersist.GetEventosByIdAsync(evento.Id, false);
+                _geralPersist.Add<Lote>(lote);
 
-                    return _mapper.Map<LoteDto>(eventoRetorno);
-                }
-                return null;
+                await _geralPersist.SaveChangesAsync();
+
             }
             catch (Exception ex)
             {
@@ -60,7 +56,7 @@ namespace Testiculo.Application
                 {
                     if(model.Id == 0)    
                     {
-
+                        await AddLote(eventoId, model);
                     }
                     else
                     {
@@ -86,7 +82,7 @@ namespace Testiculo.Application
         {
             try
             {
-                var lote = await _lotePersist.GetLoteByIdsAsync(eventoId, loteId);
+                var lote = await _lotePersist.GetLotebyIdsAsync(eventoId, loteId);
                 if(lote == null) throw new Exception("Delete - Lote não encontrado");
 
                 _geralPersist.Delete<Lote>(lote);
@@ -100,7 +96,7 @@ namespace Testiculo.Application
         }
 
 
-        public async Task<LoteDto[]> GetLotesByEventoIdaAsync(int eventoId)
+        public async Task<LoteDto[]> GetLotesbyEventoIdAsync(int eventoId)
         {
             try
             {
@@ -117,11 +113,11 @@ namespace Testiculo.Application
             }
         }
 
-        public async Task<LoteDto> GetLoteByIdsAsync(int eventoId, int loteId)
+        public async Task<LoteDto> GetLotebyIdsAsync(int eventoId, int loteId)
         {
             try
             {
-                var lote = await _lotePersist.GetLoteByIdsAsync(eventoId,loteId);
+                var lote = await _lotePersist.GetLotebyIdsAsync(eventoId,loteId);
                 if (lote == null) return null;
 
                 var resultado = _mapper.Map<LoteDto>(lote);

@@ -4,7 +4,7 @@ namespace Testiculo.Application.Contratos
 {
     public interface ILoteService
     {
-        Task<LoteDto> SaveLote(int eventoId,LoteDto[] model);    
+        Task<LoteDto[]> SaveLotes(int eventoId,LoteDto[] model);    
         Task<bool> DeleteLote(int eventoId, int loteId);   
 
         Task<LoteDto[]> GetLotesbyEventoIdAsync(int eventoId);

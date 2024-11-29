@@ -16,7 +16,6 @@ namespace Testiculo.Persistence
             //Ex.: query = query.AsNoTracking().OrderBy(e => e.Id);
 
         }
-
         public async Task<Lote[]> GetLotesbyEventoIdAsync(int eventoId)
         {
             IQueryable<Lote> query = _context.Lotes;
@@ -28,7 +27,7 @@ namespace Testiculo.Persistence
 
         }
 
-        public async Task<Lote> GetLotesByIdsAsync(int eventoId, int id)
+        public async Task<Lote> GetLotebyIdsAsync(int eventoId, int id)
         {
             IQueryable<Lote> query = _context.Lotes;
 
