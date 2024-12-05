@@ -5,6 +5,7 @@ using Testiculo.Persistence.Contexto;
 using Testiculo.Application.Contratos;
 using System.Diagnostics.Tracing;
 using Testiculo.Application.Dtos;
+using System.ComponentModel.DataAnnotations;
 
 namespace Testiculo.Controllers
 {
@@ -36,15 +37,15 @@ namespace Testiculo.Controllers
         
         //private readonly TesticuloContext _context;
         private readonly IEventoService _eventoService;
-        
+        private readonly IWebHostEnvironment _hostEnvironment;
+
 
         //public EventoController(TesticuloContext context)
-        public EventoController(IEventoService eventoService)
+        public EventoController(IEventoService eventoService, IWebHostEnvironment hostEnvironment)
         {
         //    _context = context;
             _eventoService = eventoService;
-
-            
+            _hostEnvironment = hostEnvironment;
         }
 
         [HttpGet]
@@ -129,6 +130,31 @@ namespace Testiculo.Controllers
             }            
         }
 
+        [HttpPost("upload-image/{eventoId}")]
+        public async Task<IActionResult> UploadIimage(int eventoId)
+        {
+            try
+            {
+                var evento = await _eventoService.GetEventosByIdAsync(eventoId,false);
+                if (evento == null) return NoContent();
+
+                var file = Request.Form.Files[0];
+                if(file.Length > 0)
+                {
+                    DeleteImage(evento.ImagemURL);
+                    evento.ImagemURL = await SaveImage(file);
+                }
+                var EventoRetorno = await _eventoService.UpdateEvento(eventoId, evento);
+
+                return Ok(evento);
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError,
+                    $"Erro ao tentar adicionar eventos. Erro: {ex.Message}");
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post(EventoDto model)
         {
@@ -180,6 +206,34 @@ namespace Testiculo.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError,
                     $"Erro ao tentar deletar eventos. Erro: {ex.Message}");
             }
+        }
+
+        [NonAction]
+        public async Task<string> SaveImage(IFormFile imageFile)
+        {
+            string imageName = new string(Path.GetFileNameWithoutExtension(imageFile.FileName)
+                                            .Take(10)
+                                            .ToArray()
+                                            ).Replace(' ','-');
+
+            imageName = $"{imageName}{DateTime.UtcNow.ToString("yymmssfff")}{Path.GetExtension(imageFile.FileName)}";
+
+            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, @"Resources/images", imageName);
+
+            using (var fileStream = new FileStream(imagePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(fileStream);
+            }
+            
+            return "";
+        }
+
+        [NonAction]
+        public void DeleteImage(string imageName)
+        {
+            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, @"resources/images", imageName); 
+            if (System.IO.File.Exists(imagePath))
+                System.IO.File.Delete(imagePath);
         }
     }
 }

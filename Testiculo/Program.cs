@@ -6,6 +6,7 @@ using Testiculo.Persistence;
 using Testiculo.Persistence.Contexto;
 using Testiculo.Persistence.Contratos;
 using AutoMapper;
+using Microsoft.Extensions.FileProviders;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -60,6 +61,10 @@ app.UseCors(x => x.AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowAnyOrigin());
                 
+app.UseStaticFiles(new StaticFileOptions(){
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(),"Resources")),
+    RequestPath = new PathString("/Resources")
+});
 app.MapControllers();
 
 app.Run();
