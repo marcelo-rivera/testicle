@@ -197,9 +197,16 @@ namespace Testiculo.Controllers
                 var evento = await _eventoService.GetEventosByIdAsync(id,true);
                 if (evento == null) NoContent();
 
-                return await _eventoService.DeleteEvento(id) ?
-                    Ok(new { message = "Excluído"}) :
+                if (await _eventoService.DeleteEvento(id))
+                {
+                    DeleteImage(evento.ImagemURL);
+                    return Ok(new { message = "Excluído"});
+                }
+                else
+                {
                     throw new Exception("Ocorreu um problema não específico ao tentar excluir Evento.");
+                }
+                
             }
             catch (Exception ex)
             {
@@ -211,7 +218,7 @@ namespace Testiculo.Controllers
         [NonAction]
         public async Task<string> SaveImage(IFormFile imageFile)
         {
-            string imageName = new string(Path.GetFileNameWithoutExtension(imageFile.FileName)
+            string imageName = new String(Path.GetFileNameWithoutExtension(imageFile.FileName)
                                             .Take(10)
                                             .ToArray()
                                             ).Replace(' ','-');
@@ -225,13 +232,13 @@ namespace Testiculo.Controllers
                 await imageFile.CopyToAsync(fileStream);
             }
             
-            return "";
+            return imageName;
         }
 
         [NonAction]
         public void DeleteImage(string imageName)
         {
-            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, @"resources/images", imageName); 
+            var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, @"Resources/images", imageName); 
             if (System.IO.File.Exists(imagePath))
                 System.IO.File.Delete(imagePath);
         }
