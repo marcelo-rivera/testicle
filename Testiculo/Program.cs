@@ -7,17 +7,61 @@ using Testiculo.Persistence.Contexto;
 using Testiculo.Persistence.Contratos;
 using AutoMapper;
 using Microsoft.Extensions.FileProviders;
+using System.Text.Json.Serialization;
+using Testiculo.Domain.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Identity;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+IConfigurationRoot Configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.Development.json")
+            .Build();
+
 // Add services to the container.
 
 builder.Services.AddDbContext<TesticuloContext>(
-    context => context.UseSqlite("Data Source=ProEventos.db") );
+    context => context.UseSqlite(Configuration.GetConnectionString("Default")) );
+
+builder.Services.AddIdentityCore<User>(options =>
+{
+    options.Password.RequireDigit = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 4;
+})
+.AddRoles<Role>()
+.AddRoleManager<RoleManager<Role>>()
+.AddSignInManager<SignInManager<User>>()
+.AddRoleValidator<RoleValidator<Role>>()
+.AddEntityFrameworkStores<TesticuloContext>()
+.AddDefaultTokenProviders();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(Configuration["TokenKey"])),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+            };
+        });
+
+
 
 builder.Services.AddControllers()
-                .AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling =
+                .AddJsonOptions(options => 
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())
+                )
+                .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling =
                     Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 ); // Erro de looping eterno que acontece no projeto do curso mas no atual não precisa
                    //só adicionei por didática
@@ -29,10 +73,14 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddCors();
 builder.Services.AddScoped<IEventoService, EventoService>();
 builder.Services.AddScoped<ILoteService, LoteService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 
 builder.Services.AddScoped<IGeralPersist, GeralPersist>();
 builder.Services.AddScoped<IEventoPersist, EventoPersist>();
 builder.Services.AddScoped<ILotePersist, LotePersist>();
+builder.Services.AddScoped<IUserPersist, UserPersist>();
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -52,6 +100,7 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 // app.UseEndpoints(endpoints =>
