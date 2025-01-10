@@ -1,15 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
-using Testiculo.Persistence;
-using Testiculo.Domain;
-using Testiculo.Persistence.Contexto;
 using Testiculo.Application.Contratos;
-using System.Diagnostics.Tracing;
 using Testiculo.Application.Dtos;
-using System.ComponentModel.DataAnnotations;
+using testiculo.Extensions;
+using Microsoft.AspNetCore.Authorization;
+
+using System.Security.Claims;
+
 
 namespace Testiculo.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class EventoController : ControllerBase
@@ -39,13 +39,17 @@ namespace Testiculo.Controllers
         private readonly IEventoService _eventoService;
         private readonly IWebHostEnvironment _hostEnvironment;
 
+        private readonly IAccountService _accountService;
 
         //public EventoController(TesticuloContext context)
-        public EventoController(IEventoService eventoService, IWebHostEnvironment hostEnvironment)
+        public EventoController(IEventoService eventoService, 
+                                IWebHostEnvironment hostEnvironment,
+                                IAccountService accountService)
         {
         //    _context = context;
             _eventoService = eventoService;
             _hostEnvironment = hostEnvironment;
+            _accountService = accountService;
         }
 
         [HttpGet]
@@ -55,26 +59,9 @@ namespace Testiculo.Controllers
             //return _context.Eventos;
             try
             {
-                var eventos = await _eventoService.GetallEventosAsync(true);
+                var eventos = await _eventoService.GetallEventosAsync(User.GetUserId(), true);
                 if (eventos == null) NoContent();
 
-                // var eventosRetorno = new List<EventoDto>();
-
-                // foreach (var evento in eventos)
-                // {
-                //     eventosRetorno.Add(new EventoDto() {
-                //         Id = evento.Id,
-                //         Local = evento.Local,
-                //         DataEvento = evento.DataEvento.ToString(),
-                //         Tema = evento.Tema,
-                //         QtdPessoas = evento.QtdPessoas,
-                //         ImagemURL = evento.ImagemURL,
-                //         Telefone = evento.Telefone,
-                //         Email = evento.Email
-                //     });
-                // }
-
-                // return Ok(eventosRetorno); // 
                 return Ok(eventos);
             }
             catch(Exception ex)
@@ -86,7 +73,6 @@ namespace Testiculo.Controllers
         }
         
         [HttpGet("{id}")]
-
         //public async Evento GetById(int id)
         public async Task<IActionResult> GetById(int id)
         {
@@ -95,7 +81,7 @@ namespace Testiculo.Controllers
             //return _context.Eventos.FirstOrDefault(evento => evento.Id == id);
             try
             {
-                var evento = await _eventoService.GetEventosByIdAsync(id,true);
+                var evento = await _eventoService.GetEventosByIdAsync(User.GetUserId(), id, true);
                 if (evento == null) NoContent();
 
                 return Ok(evento);
@@ -117,7 +103,7 @@ namespace Testiculo.Controllers
             //return _context.Eventos.FirstOrDefault(evento => evento.Id == id);
             try
             {
-                var evento = await _eventoService.GetallEventosByTemaAsync(tema, true);
+                var evento = await _eventoService.GetallEventosByTemaAsync(User.GetUserId(), tema, true);
                 if (evento == null) NoContent();
 
                 return Ok(evento);
@@ -135,7 +121,7 @@ namespace Testiculo.Controllers
         {
             try
             {
-                var evento = await _eventoService.GetEventosByIdAsync(eventoId,false);
+                var evento = await _eventoService.GetEventosByIdAsync(User.GetUserId(), eventoId,false);
                 if (evento == null) return NoContent();
 
                 var file = Request.Form.Files[0];
@@ -144,7 +130,7 @@ namespace Testiculo.Controllers
                     DeleteImage(evento.ImagemURL);
                     evento.ImagemURL = await SaveImage(file);
                 }
-                var EventoRetorno = await _eventoService.UpdateEvento(eventoId, evento);
+                var EventoRetorno = await _eventoService.UpdateEvento(User.GetUserId(), eventoId, evento);
 
                 return Ok(evento);
             }
@@ -160,7 +146,7 @@ namespace Testiculo.Controllers
         {
             try
             {
-                var evento = await _eventoService.AddEventos(model);
+                var evento = await _eventoService.AddEventos(User.GetUserId(), model);
                 if (evento == null) return NoContent();
 
                 return Ok(evento);
@@ -177,7 +163,7 @@ namespace Testiculo.Controllers
         {
             try
             {
-                var evento = await _eventoService.UpdateEvento( id, model);
+                var evento = await _eventoService.UpdateEvento(User.GetUserId(), id, model);
                 if (evento == null) return NoContent();
 
                 return Ok(evento);
@@ -194,10 +180,10 @@ namespace Testiculo.Controllers
         {
             try
             {
-                var evento = await _eventoService.GetEventosByIdAsync(id,true);
+                var evento = await _eventoService.GetEventosByIdAsync(User.GetUserId(), id, true);
                 if (evento == null) NoContent();
 
-                if (await _eventoService.DeleteEvento(id))
+                if (await _eventoService.DeleteEvento(User.GetUserId(), id))
                 {
                     DeleteImage(evento.ImagemURL);
                     return Ok(new { message = "Excluído"});

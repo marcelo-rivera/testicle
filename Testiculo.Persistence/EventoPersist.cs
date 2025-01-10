@@ -16,7 +16,7 @@ namespace Testiculo.Persistence
             //Ex.: query = query.AsNoTracking().OrderBy(e => e.Id);
 
         }
-        public async Task<Evento[]> GetallEventosAsync(bool includePalestrantes = false)
+        public async Task<Evento[]> GetallEventosAsync(int userId, bool includePalestrantes = false)
         {
             IQueryable<Evento> query = _context.Eventos
                 .Include(e => e.Lotes)
@@ -29,12 +29,14 @@ namespace Testiculo.Persistence
                     .ThenInclude(pe => pe.Palestrante);
             }
 
-            query = query.AsNoTracking().OrderBy(e => e.Id);
+            query = query.AsNoTracking()
+                        .Where(e => e.UserId == userId)
+                        .OrderBy(e => e.Id);
 
             return await query.ToArrayAsync();
         }
 
-        public async Task<Evento[]> GetallEventosByTemaAsync(string tema, bool includePalestrantes=false)
+        public async Task<Evento[]> GetallEventosByTemaAsync(int userId, string tema, bool includePalestrantes=false)
         {
             IQueryable<Evento> query = _context.Eventos
                 .Include(e => e.Lotes)
@@ -49,12 +51,13 @@ namespace Testiculo.Persistence
             }
 
             query = query.AsNoTracking().OrderBy(e => e.Id)
-                .Where(e => e.Tema.ToLower().Contains(tema.ToLower()));
+                .Where(e => e.Tema.ToLower().Contains(tema.ToLower())
+                        && e.UserId == userId);
 
             return await query.ToArrayAsync();
         }
 
-        public async Task<Evento> GetEventosByIdAsync(int EventoId, bool includePalestrantes=false)
+        public async Task<Evento> GetEventosByIdAsync(int userId, int EventoId, bool includePalestrantes=false)
         {
             IQueryable<Evento> query = _context.Eventos
                 .Include(e => e.Lotes)
@@ -68,7 +71,8 @@ namespace Testiculo.Persistence
             }
 
             query = query.AsNoTracking().OrderBy(e => e.Id)
-                .Where(e => e.Id == EventoId );
+                .Where(e => e.Id == EventoId 
+                        && e.UserId == userId);
 
             return await query.FirstOrDefaultAsync();
         }

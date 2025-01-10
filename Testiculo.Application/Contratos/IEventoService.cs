@@ -4,12 +4,12 @@ namespace Testiculo.Application.Contratos
 {
     public interface IEventoService
     {
-        Task<EventoDto> AddEventos(EventoDto model);    
-        Task<EventoDto> UpdateEvento(int eventoId,EventoDto model);    
-        Task<bool> DeleteEvento(int eventoId);   
+        Task<EventoDto> AddEventos(int userId, EventoDto model);    
+        Task<EventoDto> UpdateEvento(int userId, int eventoId,EventoDto model);    
+        Task<bool> DeleteEvento(int userId, int eventoId);   
 
-        Task<EventoDto[]> GetallEventosAsync(bool includePalestrantes = false);
-        Task<EventoDto[]> GetallEventosByTemaAsync(string tema, bool includePalestrantes = false);
-        Task<EventoDto> GetEventosByIdAsync(int eventoId, bool includePalestrantes = false);         
+        Task<EventoDto[]> GetallEventosAsync(int userId, bool includePalestrantes = false);
+        Task<EventoDto[]> GetallEventosByTemaAsync(int userId, string tema, bool includePalestrantes = false);
+        Task<EventoDto> GetEventosByIdAsync(int userId, int eventoId, bool includePalestrantes = false);         
     }
 }
